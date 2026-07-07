@@ -37,9 +37,15 @@ app.secret_key = "skripsi_rahasia_123"
 # =====================================================
 import os
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL",
-    "mysql+pymysql://root:@localhost/skillsync_db"
+import os
+
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"mysql+pymysql://"
+    f"{os.getenv('MYSQLUSER')}:"
+    f"{os.getenv('MYSQLPASSWORD')}@"
+    f"{os.getenv('MYSQLHOST')}:"
+    f"{os.getenv('MYSQLPORT')}/"
+    f"{os.getenv('MYSQLDATABASE')}"
 )
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
