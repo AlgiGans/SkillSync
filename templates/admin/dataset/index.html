@@ -1,0 +1,157 @@
+{% extends "admin/layout.html" %}
+
+{% block page_title %}Dataset{% endblock %}
+
+{% block content %}
+<div class="space-y-8 pb-10 animate-in fade-in duration-700">
+
+    <!-- HEADER -->
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10">
+
+        <span class="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.25em] text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100">
+            <i class="fas fa-database"></i>
+            Dataset Management
+        </span>
+
+        <h1 class="mt-6 text-4xl font-black tracking-tight text-slate-900">
+            Kelola Dataset Sistem
+        </h1>
+
+        <p class="mt-4 text-slate-500 leading-8 max-w-3xl">
+            Seluruh dataset yang digunakan pada sistem rekomendasi dapat
+            dikelola melalui halaman ini. Dataset terdiri dari Course,
+            Google Trends, dan Kompetensi Industri.
+        </p>
+
+    </div>
+
+    <!-- CARD -->
+    <div class="grid lg:grid-cols-3 gap-7">
+
+        <!-- COURSE -->
+        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-8 hover:border-emerald-300 transition">
+
+            <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-6">
+                <i class="fas fa-book-open"></i>
+            </div>
+
+            <h2 class="text-xl font-black text-slate-900">
+                Dataset Course
+            </h2>
+
+            <p class="text-slate-500 mt-3 leading-7">
+                Dataset seluruh kursus online yang digunakan sebagai kandidat
+                rekomendasi sistem.
+            </p>
+
+            <div class="mt-8 flex items-center justify-between">
+
+                <div>
+
+                    <p class="text-xs uppercase font-black tracking-widest text-slate-400">
+                        Total Data
+                    </p>
+
+                    <h3 class="text-3xl font-black text-slate-900">
+                        {{ course_count }}
+                    </h3>
+
+                </div>
+
+                <a href="{{ url_for('admin.dataset_course') }}"
+                   class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition">
+
+                    Kelola
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- TREND -->
+        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-8 hover:border-blue-300 transition">
+
+            <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl mb-6">
+                <i class="fas fa-chart-line"></i>
+            </div>
+
+            <h2 class="text-xl font-black text-slate-900">
+                Dataset Google Trends
+            </h2>
+
+            <p class="text-slate-500 mt-3 leading-7">
+                Dataset tren teknologi yang digunakan sebagai Trend Boost
+                pada proses rekomendasi.
+            </p>
+
+            <div class="mt-8 flex items-center justify-between">
+
+                <div>
+
+                    <p class="text-xs uppercase font-black tracking-widest text-slate-400">
+                        Total Data
+                    </p>
+
+                    <h3 class="text-3xl font-black text-slate-900">
+                        {{ trend_count }}
+                    </h3>
+
+                </div>
+
+                <a href="{{ url_for('admin.dataset_trend') }}"
+                   class="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition">
+
+                    Kelola
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- COMPETENCY -->
+        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-8 hover:border-amber-300 transition">
+
+            <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-6">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+
+            <h2 class="text-xl font-black text-slate-900">
+                Dataset Kompetensi
+            </h2>
+
+            <p class="text-slate-500 mt-3 leading-7">
+                Dataset kebutuhan kompetensi industri yang digunakan untuk
+                menghitung Competency Relevance.
+            </p>
+
+            <div class="mt-8 flex items-center justify-between">
+
+                <div>
+
+                    <p class="text-xs uppercase font-black tracking-widest text-slate-400">
+                        Total Data
+                    </p>
+
+                    <h3 class="text-3xl font-black text-slate-900">
+                        {{ competency_count }}
+                    </h3>
+
+                </div>
+
+                <a href="{{ url_for('admin.dataset_competency') }}"
+                   class="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition">
+
+                    Kelola
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

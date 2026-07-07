@@ -1,0 +1,285 @@
+{% extends "admin/layout.html" %}
+
+{% block page_title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="space-y-8">
+
+    <!-- ================================================= -->
+    <!-- HERO -->
+    <!-- ================================================= -->
+
+    <div class="bg-white rounded-3xl border border-slate-200 p-10">
+
+        <div class="flex flex-col lg:flex-row lg:justify-between gap-10">
+
+            <div class="max-w-3xl">
+
+                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider">
+
+                    <i class="fas fa-flask"></i>
+
+                    Research Validation Dashboard
+
+                </span>
+
+                <h1 class="mt-6 text-4xl font-black text-slate-900">
+
+                    Dashboard Validasi Sistem Rekomendasi
+
+                </h1>
+
+                <p class="mt-4 text-slate-500 leading-8">
+
+                    Halaman ini digunakan untuk melakukan validasi setiap
+                    tahapan metode penelitian mulai dari Dataset,
+                    Preprocessing, FastText Embedding,
+                    Euclidean Similarity,
+                    Trend Boost,
+                    Adaptive Score,
+                    hingga Ranking hasil rekomendasi.
+
+                </p>
+
+            </div>
+
+            <div class="flex gap-4 self-start">
+
+                <a
+                    href="{{ url_for('admin.dataset') }}"
+                    class="px-6 py-4 rounded-2xl bg-emerald-600 text-white font-bold">
+
+                    Dataset
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- DATASET -->
+    <!-- ================================================= -->
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <div class="bg-white rounded-3xl p-7 border">
+
+            <div class="text-emerald-600 text-3xl">
+
+                <i class="fas fa-book"></i>
+
+            </div>
+
+            <p class="mt-5 text-xs uppercase font-bold text-slate-400">
+
+                Course Dataset
+
+            </p>
+
+            <h2 class="mt-2 text-4xl font-black">
+
+                {{ total_course }}
+
+            </h2>
+
+        </div>
+
+        <div class="bg-white rounded-3xl p-7 border">
+
+            <div class="text-blue-600 text-3xl">
+
+                <i class="fas fa-chart-line"></i>
+
+            </div>
+
+            <p class="mt-5 text-xs uppercase font-bold text-slate-400">
+
+                Trend Dataset
+
+            </p>
+
+            <h2 class="mt-2 text-4xl font-black">
+
+                {{ total_trend }}
+
+            </h2>
+
+        </div>
+
+        <div class="bg-white rounded-3xl p-7 border">
+
+            <div class="text-orange-500 text-3xl">
+
+                <i class="fas fa-graduation-cap"></i>
+
+            </div>
+
+            <p class="mt-5 text-xs uppercase font-bold text-slate-400">
+
+                Competency Dataset
+
+            </p>
+
+            <h2 class="mt-2 text-4xl font-black">
+
+                {{ total_competency }}
+
+            </h2>
+
+        </div>
+
+        <div class="bg-white rounded-3xl p-7 border">
+
+            <div class="text-purple-600 text-3xl">
+
+                <i class="fas fa-users"></i>
+
+            </div>
+
+            <p class="mt-5 text-xs uppercase font-bold text-slate-400">
+
+                Registered User
+
+            </p>
+
+            <h2 class="mt-2 text-4xl font-black">
+
+                {{ total_user }}
+
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- IPO -->
+    <!-- ================================================= -->
+
+    <div class="bg-white rounded-3xl border">
+
+        <div class="border-b px-8 py-6">
+
+            <h2 class="text-2xl font-black">
+
+                Tahapan Metode Penelitian
+
+            </h2>
+
+            <p class="text-slate-500 mt-2">
+
+                Setiap halaman di bawah digunakan untuk memverifikasi hasil
+                implementasi metode pada penelitian.
+
+            </p>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6 p-8">
+
+            <a href="{{ url_for('admin.method_preprocessing') }}"
+               class="border rounded-2xl p-6 hover:border-emerald-500">
+
+                <h3 class="font-bold">
+
+                    1. Preprocessing
+
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-2">
+
+                    Case Folding, Cleaning,
+                    Tokenizing,
+                    Stopword Removal,
+                    Normalization
+
+                </p>
+
+            </a>
+
+            <a href="{{ url_for('admin.method_embedding') }}"
+               class="border rounded-2xl p-6 hover:border-emerald-500">
+
+                <h3 class="font-bold">
+
+                    2. FastText Embedding
+
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-2">
+
+                    Representasi vektor seluruh data.
+
+                </p>
+
+            </a>
+
+            <a href="{{ url_for('admin.method_similarity') }}"
+               class="border rounded-2xl p-6 hover:border-emerald-500">
+
+                <h3 class="font-bold">
+
+                    3. Similarity
+
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-2">
+
+                    Profile-Course,
+                    Profile-Trend,
+                    Trend-Course,
+                    Competency-Course
+
+                </p>
+
+            </a>
+
+            <a href="{{ url_for('admin.method_trend_boost') }}"
+               class="border rounded-2xl p-6 hover:border-emerald-500">
+
+                <h3 class="font-bold">
+
+                    4. Trend Boost
+
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-2">
+
+                    α × Similarity + (1-α) × Popularity
+
+                </p>
+
+            </a>
+
+            <a href="{{ url_for('admin.method_adaptive_score') }}"
+               class="border rounded-2xl p-6 hover:border-emerald-500">
+
+                <h3 class="font-bold">
+
+                    5. Adaptive Score
+
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-2">
+
+                    Internal Relevance + β × Trend Boost
+
+                </p>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

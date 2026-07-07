@@ -1,0 +1,461 @@
+{% extends "admin/layout.html" %}
+
+{% block page_title %}
+Evaluasi Precision@K
+{% endblock %}
+
+{% block content %}
+
+<div class="space-y-8">
+
+<!-- Header -->
+<div class="bg-white rounded-2xl shadow-sm border p-8">
+
+    <h2 class="text-2xl font-bold">
+        Evaluasi Precision@K
+    </h2>
+
+    <p class="text-slate-500 mt-2">
+        Halaman ini digunakan untuk mengevaluasi performa sistem rekomendasi
+        menggunakan metode Precision@K menggunakan seluruh skenario
+        yang terdapat pada Ground Truth.
+    </p>
+
+</div>
+
+<!-- Summary -->
+
+<div class="grid grid-cols-4 gap-6">
+
+<div class="bg-white rounded-2xl border p-6">
+
+<p class="text-slate-500">
+Total Skenario
+</p>
+
+<h1 class="text-4xl font-bold mt-3">
+{{ evaluation.total_skenario if evaluation else 0 }}
+</h1>
+
+</div>
+
+<div class="bg-white rounded-2xl border p-6">
+
+<p class="text-slate-500">
+Average Precision@1
+</p>
+
+<h1 class="text-4xl font-bold mt-3 text-emerald-600">
+{{ evaluation.avg_precision1 if evaluation else "-" }}
+</h1>
+
+</div>
+
+<div class="bg-white rounded-2xl border p-6">
+
+<p class="text-slate-500">
+Average Precision@5
+</p>
+
+<h1 class="text-4xl font-bold mt-3 text-emerald-600">
+{{ evaluation.avg_precision5 if evaluation else "-" }}
+</h1>
+
+</div>
+
+<div class="bg-white rounded-2xl border p-6">
+
+<p class="text-slate-500">
+Average Precision@10
+</p>
+
+<h1 class="text-4xl font-bold mt-3 text-emerald-600">
+{{ evaluation.avg_precision10 if evaluation else "-" }}
+</h1>
+
+</div>
+
+</div>
+
+<!-- Button -->
+<form method="POST">
+
+<div class="bg-white rounded-2xl border p-8 space-y-6">
+
+    <!-- MODE SELECTION -->
+    <div>
+        <label class="font-bold text-lg">Mode Evaluasi</label>
+
+        <select name="mode"
+                id="modeSelect"
+                class="w-full mt-2 border rounded-lg p-3">
+            <option value="global">Global Evaluation (Semua Profesi)</option>
+            <option value="scenario">Scenario Evaluation (Pilih 3–5 Profesi)</option>
+        </select>
+    </div>
+
+    <!-- SCENARIO SECTION -->
+    <div id="scenarioBox" class="hidden">
+
+        <label class="font-bold text-lg">Pilih Profesi (Scenario Mode)</label>
+
+        <p class="text-sm text-slate-500 mb-2">
+            Maksimal 5 profesi untuk analisis Bab 4
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto border p-4 rounded-lg">
+
+            {% for row in competency_guides %}
+            <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox"
+                       class="prof-checkbox"
+                       name="professions"
+                       value="{{ row.Profesi_Bidang_Usaha }}">
+                <span>{{ row.Profesi_Bidang_Usaha }}</span>
+            </label>
+            {% endfor %}
+
+        </div>
+
+        <p id="warning" class="text-red-500 text-sm mt-2 hidden">
+            Maksimal hanya 5 profesi yang boleh dipilih
+        </p>
+
+    </div>
+
+    <!-- BUTTON -->
+    <div class="flex justify-end">
+        <button type="submit"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold">
+            Jalankan Evaluasi
+        </button>
+    </div>
+
+</div>
+
+</form>
+
+<!-- Detail -->
+
+<div class="bg-white rounded-2xl border overflow-hidden">
+
+<div class="px-6 py-4 border-b">
+
+<h3 class="font-bold text-lg">
+
+Detail Evaluasi
+
+</h3>
+
+</div>
+
+<table class="min-w-full">
+
+<thead class="bg-slate-100">
+
+<tr>
+
+<th class="px-4 py-3">No</th>
+
+<th class="px-4 py-3">Profesi</th>
+
+<th class="px-4 py-3">Kompetensi</th>
+
+<th class="px-4 py-3">Ground Truth</th>
+
+<th class="px-4 py-3">Top Recommendation</th>
+
+<th class="px-4 py-3">Hit</th>
+
+<th class="px-4 py-3">P@1</th>
+
+<th class="px-4 py-3">P@3</th>
+
+<th class="px-4 py-3">P@5</th>
+
+<th class="px-4 py-3">P@10</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% if evaluation %}
+
+{% for row in evaluation.detail %}
+
+<tr class="border-t hover:bg-slate-50">
+
+<td class="px-4 py-3 text-center">
+{{ loop.index }}
+</td>
+
+<td class="px-4 py-3">
+{{ row.profession }}
+</td>
+
+<td class="px-4 py-3 text-sm">
+{{ row.competencies|join(", ") }}
+</td>
+
+<td class="px-4 py-3 text-sm">
+{{ row.ground_truth|join(", ") }}
+</td>
+
+<td class="px-4 py-3 text-sm">
+{{ row.recommendations|join(", ") }}
+</td>
+
+<td class="px-4 py-3 text-center">
+
+{% if row.hit > 0 %}
+
+<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">
+
+{{ row.hit }}
+
+</span>
+
+{% else %}
+
+<span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+
+0
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td class="px-4 py-3 text-center">
+{{ row.precision1 }}
+</td>
+
+<td class="px-4 py-3 text-center">
+{{ row.precision3 }}
+</td>
+
+<td class="px-4 py-3 text-center">
+{{ row.precision5 }}
+</td>
+
+<td class="px-4 py-3 text-center">
+{{ row.precision10 }}
+</td>
+
+</tr>
+
+{% endfor %}
+
+{% else %}
+
+<tr>
+
+<td colspan="10" class="text-center py-10 text-slate-500">
+
+Belum ada evaluasi yang dijalankan.
+
+</td>
+
+</tr>
+
+{% endif %}
+
+</tbody>
+
+</table>
+
+</div>
+{% if evaluation %}
+
+<div class="bg-white rounded-2xl border p-8">
+
+<h3 class="text-xl font-bold mb-6">
+
+Ringkasan Evaluasi
+
+</h3>
+
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-6">
+
+<div class="rounded-xl bg-slate-50 p-6">
+
+<p class="text-slate-500">
+
+Total Skenario
+
+</p>
+
+<h2 class="text-3xl font-bold mt-2">
+
+{{ evaluation.total_skenario }}
+
+</h2>
+
+</div>
+
+<div class="rounded-xl bg-emerald-50 p-6">
+
+<p class="text-slate-500">
+
+Average Precision@1
+
+</p>
+
+<h2 class="text-3xl font-bold text-emerald-600 mt-2">
+
+{{ evaluation.avg_precision1 }}
+
+</h2>
+
+</div>
+
+<div class="rounded-xl bg-emerald-50 p-6">
+
+<p class="text-slate-500">
+
+Average Precision@3
+
+</p>
+
+<h2 class="text-3xl font-bold text-emerald-600 mt-2">
+
+{{ evaluation.avg_precision3 }}
+
+</h2>
+
+</div>
+
+<div class="rounded-xl bg-emerald-50 p-6">
+
+<p class="text-slate-500">
+
+Average Precision@5
+
+</p>
+
+<h2 class="text-3xl font-bold text-emerald-600 mt-2">
+
+{{ evaluation.avg_precision5 }}
+
+</h2>
+
+</div>
+
+<div class="rounded-xl bg-emerald-50 p-6">
+
+<p class="text-slate-500">
+
+Average Precision@10
+
+</p>
+
+<h2 class="text-3xl font-bold text-emerald-600 mt-2">
+
+{{ evaluation.avg_precision10 }}
+
+</h2>
+
+</div>
+
+</div>
+
+<div class="mt-8">
+
+<h4 class="font-bold text-lg mb-4">
+
+Interpretasi
+
+</h4>
+
+<div class="rounded-xl bg-slate-50 p-6 leading-8">
+
+<p>
+
+<b>Total Skenario :</b>
+{{ evaluation.total_skenario }}
+
+</p>
+
+<p>
+
+<b>Average Precision@1 :</b>
+{{ evaluation.avg_precision1 }}
+
+</p>
+
+<p>
+
+<b>Average Precision@3 :</b>
+{{ evaluation.avg_precision3 }}
+
+</p>
+
+<p>
+
+<b>Average Precision@5 :</b>
+{{ evaluation.avg_precision5 }}
+
+</p>
+
+<p>
+
+<b>Average Precision@10 :</b>
+{{ evaluation.avg_precision10 }}
+
+</p>
+
+<hr class="my-4">
+
+<p class="text-slate-600">
+
+Semakin mendekati <b>1.0</b>, maka sistem semakin mampu
+merekomendasikan kursus yang sesuai dengan Ground Truth
+pada seluruh skenario pengujian.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+{% endif %}
+
+</div>
+<script>
+const modeSelect = document.getElementById("modeSelect");
+const scenarioBox = document.getElementById("scenarioBox");
+const checkboxes = document.querySelectorAll(".prof-checkbox");
+const warning = document.getElementById("warning");
+
+modeSelect.addEventListener("change", function () {
+    if (this.value === "scenario") {
+        scenarioBox.classList.remove("hidden");
+    } else {
+        scenarioBox.classList.add("hidden");
+
+        // uncheck semua kalau global
+        checkboxes.forEach(cb => cb.checked = false);
+        warning.classList.add("hidden");
+    }
+});
+
+// limit 5 pilihan
+checkboxes.forEach(cb => {
+    cb.addEventListener("change", function () {
+        const checked = document.querySelectorAll(".prof-checkbox:checked");
+
+        if (checked.length > 5) {
+            this.checked = false;
+            warning.classList.remove("hidden");
+        } else {
+            warning.classList.add("hidden");
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "admin/layout.html" %}
+
+{% block page_title %}Similarity{% endblock %}
+
+{% block content %}
+
+<div class="space-y-8">
+
+    <!-- HEADER -->
+    <div class="bg-white rounded-3xl border border-slate-200 p-8">
+
+        <div class="flex justify-between items-center">
+
+            <div>
+
+                <h1 class="text-3xl font-black text-slate-900">
+                    Similarity Calculation
+                </h1>
+
+                <p class="text-slate-500 mt-2">
+                    Perhitungan Euclidean Distance yang telah dikonversi menjadi Similarity.
+                </p>
+
+            </div>
+
+            <div class="bg-indigo-50 px-5 py-3 rounded-2xl">
+
+                <div class="text-xs uppercase font-bold text-indigo-500">
+                    Total Course
+                </div>
+
+                <div class="text-3xl font-black text-indigo-700">
+
+                    {{ total }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden">
+
+        <div class="overflow-auto">
+
+            <table class="min-w-full">
+
+                <thead class="bg-slate-100">
+
+                <tr class="text-xs uppercase tracking-wider text-slate-600">
+
+                    <th class="px-6 py-4 text-left">Course</th>
+
+                    <th class="px-6 py-4 text-center">
+
+                        Profile → Course
+
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+
+                        Profile → Trend
+
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+
+                        Trend Terpilih
+
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+
+                        Trend → Course
+
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+
+                        Competency → Course
+
+                    </th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for row in results %}
+
+                <tr class="border-t hover:bg-slate-50">
+
+                    <td class="px-6 py-5">
+
+                        <div class="font-semibold">
+
+                            {{ row.course }}
+
+                        </div>
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        {{ row.profile_course }}
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        {{ row.profile_trend }}
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        <span class="bg-indigo-100
+                                     text-indigo-700
+                                     px-3 py-1
+                                     rounded-full
+                                     text-xs
+                                     font-bold">
+
+                            {{ row.trend }}
+
+                        </span>
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        {{ row.trend_course }}
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        {{ row.competency_course }}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

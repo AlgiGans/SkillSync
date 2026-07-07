@@ -1,0 +1,258 @@
+{% extends "admin/layout.html" %}
+
+{% block page_title %}Preprocessing{% endblock %}
+
+{% block content %}
+<div class="space-y-8 pb-10 animate-in fade-in duration-700">
+
+    <!-- ================= HEADER ================= -->
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10">
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+
+            <div>
+
+                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-50 border border-violet-100 text-violet-600 text-xs font-black uppercase tracking-[0.25em]">
+
+                    <i class="fas fa-filter"></i>
+
+                    Method
+
+                </span>
+
+                <h1 class="mt-5 text-4xl font-black text-slate-900">
+
+                    Text Preprocessing
+
+                </h1>
+
+                <p class="mt-3 text-slate-500 leading-8 max-w-3xl">
+
+                    Tahapan preprocessing digunakan untuk membersihkan data
+                    teks sebelum diproses oleh FastText. Tahapan meliputi
+                    Case Folding, Cleaning, Tokenizing,
+                    Stopword Removal, dan Normalization.
+
+                </p>
+
+            </div>
+
+            <div class="text-right">
+
+                <p class="text-xs uppercase tracking-widest font-black text-slate-400">
+
+                    Total Course
+
+                </p>
+
+                <h2 class="text-5xl font-black text-violet-600">
+
+                    {{ total }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ================= SEARCH ================= -->
+
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+
+        <input
+            id="searchCourse"
+            type="text"
+            placeholder="Cari course..."
+            class="w-full rounded-2xl border border-slate-200 px-5 py-4 outline-none focus:ring-2 focus:ring-violet-500">
+
+    </div>
+
+    <!-- ================= RESULT ================= -->
+
+    <div id="resultList" class="space-y-8">
+
+        {% for row in results %}
+
+        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+
+            <!-- HEADER -->
+
+            <div class="bg-slate-50 px-8 py-6 border-b">
+
+                <h2 class="text-xl font-black text-slate-900">
+
+                    {{ row.course }}
+
+                </h2>
+
+            </div>
+
+            <!-- CONTENT -->
+
+            <div class="grid lg:grid-cols-2 gap-6 p-8">
+
+                <!-- Original -->
+
+                <div>
+
+                    <h3 class="font-bold text-slate-700 mb-3">
+
+                        Original Text
+
+                    </h3>
+
+                    <div class="rounded-xl bg-slate-50 border p-4 text-sm leading-7">
+
+                        {{ row.original }}
+
+                    </div>
+
+                </div>
+
+                <!-- Case Folding -->
+
+                <div>
+
+                    <h3 class="font-bold text-slate-700 mb-3">
+
+                        Case Folding
+
+                    </h3>
+
+                    <div class="rounded-xl bg-slate-50 border p-4 text-sm leading-7">
+
+                        {{ row.case_folding }}
+
+                    </div>
+
+                </div>
+
+                <!-- Cleaning -->
+
+                <div>
+
+                    <h3 class="font-bold text-slate-700 mb-3">
+
+                        Cleaning
+
+                    </h3>
+
+                    <div class="rounded-xl bg-slate-50 border p-4 text-sm leading-7">
+
+                        {{ row.clean_text }}
+
+                    </div>
+
+                </div>
+
+                <!-- Token -->
+
+                <div>
+
+                    <h3 class="font-bold text-slate-700 mb-3">
+
+                        Tokenizing
+
+                    </h3>
+
+                    <div class="rounded-xl bg-blue-50 border border-blue-100 p-4">
+
+                        <div class="flex flex-wrap gap-2">
+
+                            {% for token in row.tokens %}
+
+                            <span class="px-3 py-1 rounded-lg bg-blue-600 text-white text-xs">
+
+                                {{ token }}
+
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Stopword -->
+
+                <div>
+
+                    <h3 class="font-bold text-slate-700 mb-3">
+
+                        Stopword Removal
+
+                    </h3>
+
+                    <div class="rounded-xl bg-emerald-50 border border-emerald-100 p-4">
+
+                        <div class="flex flex-wrap gap-2">
+
+                            {% for token in row.filtered_tokens %}
+
+                            <span class="px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs">
+
+                                {{ token }}
+
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Normalization -->
+
+                <div>
+
+                    <h3 class="font-bold text-slate-700 mb-3">
+
+                        Normalization
+
+                    </h3>
+
+                    <div class="rounded-xl bg-amber-50 border border-amber-100 p-4 text-sm leading-7">
+
+                        {{ row.normalization }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script>
+
+const search=document.getElementById("searchCourse");
+
+search.addEventListener("keyup",function(){
+
+const keyword=this.value.toLowerCase();
+
+document.querySelectorAll("#resultList > div").forEach(function(card){
+
+card.style.display=
+card.innerText.toLowerCase().includes(keyword)
+?"":"none";
+
+});
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+# Virtual Environment
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# FastText model
+models/*.model
+models/*.npy

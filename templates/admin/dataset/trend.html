@@ -1,0 +1,264 @@
+{% extends "admin/layout.html" %}
+
+{% block page_title %}Dataset Trend{% endblock %}
+
+{% block content %}
+<div class="space-y-8 pb-10 animate-in fade-in duration-700">
+
+    <!-- HEADER -->
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10">
+
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-8">
+
+            <div>
+
+                <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 text-xs font-black uppercase tracking-[0.25em]">
+
+                    <i class="fas fa-chart-line"></i>
+
+                    Google Trends
+
+                </span>
+
+                <h1 class="mt-5 text-4xl font-black text-slate-900">
+                    Dataset Google Trends
+                </h1>
+
+                <p class="mt-3 text-slate-500 leading-8 max-w-3xl">
+                    Dataset Google Trends digunakan sebagai sumber informasi
+                    popularitas teknologi yang kemudian dihitung menggunakan
+                    Trend Boost pada proses rekomendasi.
+                </p>
+
+            </div>
+
+            <div class="text-right">
+
+                <p class="text-xs uppercase tracking-widest font-black text-slate-400">
+
+                    Total Trend
+
+                </p>
+
+                <h2 class="text-5xl font-black text-blue-600">
+
+                    {{ trends|length }}
+
+                </h2>
+
+                <div class="flex gap-3 justify-end mt-6">
+
+                    <button
+                        onclick="document.getElementById('uploadModal').classList.remove('hidden')"
+                        class="px-6 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold">
+
+                        <i class="fas fa-upload mr-2"></i>
+
+                        Upload
+
+                    </button>
+
+                    <form
+                        action="{{ url_for('admin.clear_trend') }}"
+                        method="POST">
+
+                        <button
+                            onclick="return confirm('Hapus seluruh data trend?')"
+                            class="px-6 py-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold">
+
+                            <i class="fas fa-trash mr-2"></i>
+
+                            Clear
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SEARCH -->
+
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+
+        <input
+            id="searchTrend"
+            type="text"
+            placeholder="Cari keyword trend..."
+            class="w-full rounded-2xl border border-slate-200 px-5 py-4 outline-none focus:ring-2 focus:ring-blue-500">
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full">
+
+                <thead class="bg-slate-50">
+
+                    <tr>
+
+                        <th class="px-6 py-5 text-left">
+                            Keyword
+                        </th>
+
+                        <th>
+                            Search Interest
+                        </th>
+
+                        <th>
+                            Increase
+                        </th>
+
+                        <th class="text-center">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="trendTable">
+
+                    {% for trend in trends %}
+
+                    <tr class="border-t hover:bg-slate-50">
+
+                        <td class="px-6 py-5 font-semibold">
+
+                            {{ trend.keyword }}
+
+                        </td>
+
+                        <td>
+
+                            <span class="px-3 py-1 rounded-lg bg-blue-50 text-blue-600 text-xs font-bold">
+
+                                {{ trend.value }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-600 text-xs font-bold">
+
+                                {{ trend.increase_percent }}
+
+                            </span>
+
+                        </td>
+
+                        <td class="text-center">
+
+                            <form
+                                action="{{ url_for('admin.delete_trend',id=trend.id) }}"
+                                method="POST">
+
+                                <button
+                                    onclick="return confirm('Hapus trend ini?')"
+                                    class="w-10 h-10 rounded-xl bg-red-50 hover:bg-red-100 text-red-600">
+
+                                    <i class="fas fa-trash"></i>
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Upload Modal -->
+
+<div
+id="uploadModal"
+class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+
+<div class="bg-white rounded-[2rem] p-8 w-full max-w-lg">
+
+<h2 class="text-2xl font-black mb-6">
+
+Upload Dataset Google Trends
+
+</h2>
+
+<form
+action="{{ url_for('admin.upload_trend_dataset') }}"
+method="POST"
+enctype="multipart/form-data">
+
+<input
+type="file"
+name="file"
+accept=".csv,.xlsx"
+required
+class="w-full border rounded-xl p-4">
+
+<div class="flex justify-end gap-4 mt-8">
+
+<button
+type="button"
+onclick="document.getElementById('uploadModal').classList.add('hidden')"
+class="px-5 py-3 rounded-xl border">
+
+Batal
+
+</button>
+
+<button
+class="px-5 py-3 rounded-xl bg-blue-600 text-white font-bold">
+
+Upload
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+const trendSearch = document.getElementById("searchTrend");
+
+trendSearch.addEventListener("keyup",function(){
+
+const value=this.value.toLowerCase();
+
+document.querySelectorAll("#trendTable tr").forEach(function(row){
+
+row.style.display=row.innerText.toLowerCase().includes(value)
+?"":"none";
+
+});
+
+});
+
+</script>
+
+{% endblock %}

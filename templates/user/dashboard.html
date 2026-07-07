@@ -1,0 +1,672 @@
+{% extends "user/layout.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-[#F8FAFC] pb-20 font-['Inter'] overflow-x-hidden">
+
+    <!-- HERO -->
+    <div class="bg-white border-b border-slate-200 pt-10 pb-16 px-4 sm:px-6 md:px-8 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto relative z-10">
+
+            <nav class="flex items-center gap-2 mb-6 flex-wrap">
+                <span class="bg-emerald-600 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-[0.2em]">
+                    Sistem Rekomendasi Kursus Online Bidang IT
+                </span>
+            </nav>
+
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4 leading-tight">
+                Pilih Platform
+                <span class="text-emerald-600">Terbaikmu.</span>
+            </h1>
+
+            <p class="text-slate-500 max-w-2xl text-sm sm:text-base md:text-lg leading-relaxed">
+                Sistem merekomendasikan kursus menggunakan analisis berdasarkan
+                <span class="font-bold text-slate-800 italic underline decoration-emerald-500 decoration-2 underline-offset-4">
+                    kompetensi profesi, tingkat kemampuan, serta tren keterampilan industri
+                </span>
+                menggunakan Semantic Similarity,Kompetensi Profesi,serta Google Trends.
+            </p>
+
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+
+    <button
+        type="button"
+        onclick="openSkillModal()"
+        class="inline-flex items-center gap-3 px-5 py-3 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all duration-300 group"
+    >
+        <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-500 transition-all">
+            <i class="fas fa-book-open text-emerald-600 group-hover:text-white"></i>
+        </div>
+
+        <div class="text-left">
+            <div class="text-sm font-black text-slate-800">
+                Referensi Skill Profesi
+            </div>
+
+            <div class="text-xs text-slate-500">
+                Lihat kompetensi dan kebutuhan industri
+            </div>
+        </div>
+    </button>
+
+</div>
+
+        </div>
+
+        <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50"></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 -mt-10 relative z-20">
+
+        <div class="bg-white rounded-[2rem] shadow-2xl shadow-emerald-900/5 border border-slate-100 p-4 sm:p-3">
+
+            <form method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-2 items-center">
+
+                <!-- PROFESI -->
+<div class="md:col-span-5 relative group px-2 md:px-4">
+    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1 tracking-widest">
+        Profesi / Bidang Usaha
+    </label>
+
+    <div class="flex items-center">
+        <i class="fas fa-briefcase text-emerald-500 mr-3"></i>
+
+        <select
+    id="profesiSelect"
+    name="profession"
+            required
+            class="w-full border-none focus:ring-0 text-slate-800 font-bold p-0 text-sm sm:text-base bg-transparent cursor-pointer"
+        >
+            <option value="">Pilih Profesi</option>
+
+            {% for profesi in profesi_list %}
+            <option
+                value="{{ profesi }}"
+                {% if profession == profesi %}selected{% endif %}
+            >
+                {{ profesi }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- KOMPETENSI -->
+<div class="md:col-span-3 md:border-l border-slate-100 px-2 md:px-6">
+
+    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">
+        Kompetensi yang Ingin Dipelajari
+    </label>
+
+    <button
+        type="button"
+        onclick="openSkillPicker()"
+        class="w-full text-left px-4 py-3 rounded-2xl border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50 transition"
+    >
+
+        <div class="font-bold text-slate-700">
+            Pilih Kompetensi
+        </div>
+
+        <div
+            id="selectedSkillCount"
+            class="text-xs text-slate-400 mt-1"
+        >
+            Belum ada skill dipilih
+        </div>
+
+    </button>
+
+</div>
+
+                    <input
+                        type="hidden"
+                        id="selectedSkillsHidden"
+                        name="selected_skills"
+                    />
+
+                <!-- BUTTON -->
+                <div class="md:col-span-2">
+                    <button
+                        type="submit"
+                        class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-200 uppercase text-xs tracking-widest active:scale-95"
+                    >
+                        Analisis
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 mt-20">
+
+        {% if results %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+
+            <!-- LEFT -->
+            <div class="lg:col-span-8 space-y-10">
+
+                <div class="flex items-center gap-4 mb-6">
+                    <h2 class="text-sm font-black text-slate-900 uppercase tracking-[0.3em]">
+                        Hasil Rekomendasi
+                    </h2>
+                    <div class="h-px bg-slate-200 flex-1"></div>
+                </div>
+
+                {% for row in results %}
+
+                <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:border-emerald-200 transition-all duration-500 group">
+
+                    <!-- TOP -->
+                    <div class="bg-slate-50 px-4 sm:px-6 md:px-8 py-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 shrink-0">
+                                <i class="fas fa-university text-white text-sm"></i>
+                            </div>
+
+                            <span class="text-lg sm:text-xl font-black text-slate-900 tracking-tighter uppercase italic break-words">
+                                {{ row.mitra }}
+                            </span>
+                        </div>
+
+                        <div class="bg-white px-4 py-1.5 rounded-full border border-slate-200 shadow-sm w-fit">
+                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+                                Rank Score: {{ "%.3f"|format(row.score) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="p-4 sm:p-6 md:p-8">
+
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-slate-800 mb-6 leading-snug break-words group-hover:text-emerald-600 transition-colors">
+                            {{ row.course }}
+                        </h3>
+
+                        <!-- GRID METRIC -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8 mb-8">
+
+                            <!-- SIMILARITY -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    <span>Profile Similarity</span>
+                                    <span class="text-slate-900">{{ "%.3f"|format(row.profile_similarity) }}</span>
+                                </div>
+
+                                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div
+                                        class="bg-emerald-500 h-full rounded-full shadow-[0_0_10px_rgba(16,185,129,0.3)]"
+                                        style="width: {{ row.profile_similarity * 100 }}%"
+                                    ></div>
+                                </div>
+                            </div>
+
+                            <!-- TREND -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    <span>Trend Boost</span>
+                                    <span class="text-slate-900">style="width: {{ (row.adaptive_score if row.adaptive_score < 1 else 1) *100 }}%""</span>
+                                </div>
+
+                                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div
+                                        class="bg-teal-400 h-full rounded-full"
+                                        style="width: {{ row.trend_boost }}"
+                                    ></div>
+                                </div>
+                            </div>
+
+                            <!-- COMPETENCY -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    <span>Competency Similarity</span>
+                                    <span class="text-slate-900">
+                                        {{ "%.3f"|format(row.competency_similarity) }}
+                                    </span>
+                                </div>
+
+                                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div
+                                        class="bg-violet-500 h-full rounded-full"
+                                        style="width: {{ row.competency_similarity * 100 }}%"
+                                    ></div>
+                                </div>
+                            </div>
+
+                            <!-- ADAPTIVE -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    <span>Adaptive Score</span>
+                                    <span class="text-slate-900">{{ "%.3f"|format(row.adaptive_score) }}</span>
+                                </div>
+
+                                <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <div
+                                        class="bg-orange-500 h-full rounded-full"
+                                        style="width: {{ row.adaptive_score * 100 }}%"
+                                    ></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pt-6 border-t border-slate-50">
+
+                            <div class="flex flex-wrap gap-4 w-full">
+
+                                <div class="flex flex-col">
+                                    <span class="text-[8px] font-black text-slate-400 uppercase">
+                                        Status
+                                    </span>
+
+                                    <span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                        Available
+                                    </span>
+                                </div>
+
+                                <div class="flex flex-col border-l border-slate-200 pl-4">
+                                    <span class="text-[8px] font-black text-slate-400 uppercase">
+                                        Category
+                                    </span>
+
+                                    <span class="text-xs font-bold text-slate-700">
+                                        Digital Skill
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <a
+                                href="{{ row.url }}"
+                                target="_blank"
+                                class="w-full lg:w-auto text-center px-6 sm:px-10 py-4 bg-[#061712] text-white text-xs font-black rounded-2xl hover:bg-emerald-600 transition-all uppercase tracking-[0.2em] shadow-lg"
+                            >
+                                Lihat Kursus
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+            </div>
+
+            <!-- RIGHT -->
+            <div class="lg:col-span-4 space-y-8">
+
+                <div class="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-slate-200 p-5 sm:p-8 shadow-sm">
+
+                    <h4 class="text-xs font-black text-slate-900 uppercase tracking-widest mb-8 flex items-center gap-3">
+                        <i class="fas fa-fire text-orange-500"></i>
+                        Skill ini mulai berkembang dan berpotensi menjadi kebutuhan industri di masa depan.
+                    </h4>
+
+                    <div class="space-y-4">
+
+                        {% for t in trend_insight %}
+
+                        <div class="flex flex-col p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all">
+
+                            <div class="flex justify-between items-center mb-1 gap-3">
+
+                                <span class="text-sm font-bold text-slate-800 break-words">
+                                    {{ t.skill }}
+                                </span>
+
+                                <span class="text-[10px] font-black text-emerald-600 uppercase shrink-0">
+                                    {{ t.level }}
+                                </span>
+
+                            </div>
+
+                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter italic">
+                                {{ t.market_label }}
+                            </span>
+
+                        </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+
+        <!-- EMPTY -->
+        <div class="py-20 sm:py-32 flex flex-col items-center justify-center px-4">
+
+            <div class="w-24 h-24 bg-white rounded-[2rem] shadow-xl flex items-center justify-center text-emerald-100 mb-8 border border-emerald-50">
+                <i class="fas fa-layer-group text-4xl"></i>
+            </div>
+
+            <h3 class="text-2xl font-black text-slate-800 mb-2 text-center">
+                Siap untuk Eksplorasi?
+            </h3>
+
+            <p class="text-slate-400 text-sm max-w-xs text-center font-medium leading-relaxed">
+                Gunakan fitur pencarian untuk memetakan kurikulum terbaik dari berbagai platform mitra kami.
+            </p>
+
+        </div>
+
+        {% endif %}
+    </div>
+</div>
+
+<!-- MODAL REFERENSI -->
+<div
+    id="skillModal"
+    class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4"
+>
+
+    <div class="bg-white rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-y-auto p-6">
+
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">
+                Referensi Skill Berdasarkan Profesi
+            </h3>
+
+            <button
+                onclick="closeSkillModal()"
+                class="text-red-500"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <table class="w-full border border-gray-300 text-sm">
+
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="border p-2">Profesi</th>
+                    <th class="border p-2">Skill</th>
+                    <th class="border p-2">Detail Item</th>
+                    <th class="border p-2">Level</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for row in skill_reference %}
+
+                <tr>
+                    <td class="border p-2">
+                        {{ row.Profesi_Bidang_Usaha }}
+                    </td>
+
+                    <td class="border p-2">
+                        {{ row.Skill_yang_harus_dikuasai }}
+                    </td>
+
+                    <td class="border p-2">
+                        {{ row.Detail_Item }}
+                    </td>
+
+                    <td class="border p-2">
+                        {{ row.Level }}
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- MODAL PILIH KOMPETENSI -->
+<div
+    id="skillPickerModal"
+    class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4"
+>
+
+    <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[85vh] overflow-hidden">
+
+        <div class="p-6 border-b flex justify-between items-center">
+
+            <div>
+
+                <h3 class="text-xl font-black text-slate-800">
+                    Kompetensi yang Ingin Dipelajari
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Pilih Kompetensi yang Ingin Dipelajari
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                onclick="closeSkillPicker()"
+                class="text-red-500 text-xl"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+
+        </div>
+
+        <div
+            id="skillList"
+            class="p-6 grid md:grid-cols-2 gap-4 overflow-y-auto max-h-[60vh]"
+        >
+
+            <div class="text-slate-400 italic">
+                Pilih profesi terlebih dahulu
+            </div>
+
+        </div>
+
+        <div class="p-6 border-t flex justify-end">
+
+            <button
+                type="button"
+                onclick="closeSkillPicker()"
+                class="px-6 py-3 bg-emerald-600 text-white rounded-2xl font-bold"
+            >
+                Simpan Pilihan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    * {
+        word-wrap: break-word;
+    }
+
+    select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2310b981' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0px center;
+        background-repeat: no-repeat;
+        background-size: 1.2em 1.2em;
+        appearance: none;
+    }
+</style>
+
+<script>
+
+let selectedCompetencies =
+    {{ selected_competencies|tojson|safe }};
+function openSkillModal() {
+    document
+        .getElementById("skillModal")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("skillModal")
+        .classList.add("flex");
+}
+
+function closeSkillModal() {
+    document
+        .getElementById("skillModal")
+        .classList.add("hidden");
+
+    document
+        .getElementById("skillModal")
+        .classList.remove("flex");
+}
+
+function openSkillPicker() {
+
+    const profesi =
+        document.getElementById("profesiSelect").value;
+
+    if (!profesi) {
+        alert("Pilih profesi terlebih dahulu");
+        return;
+    }
+
+    loadSkills();
+
+    document
+        .getElementById("skillPickerModal")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("skillPickerModal")
+        .classList.add("flex");
+}
+
+function closeSkillPicker() {
+
+    document
+        .getElementById("skillPickerModal")
+        .classList.add("hidden");
+
+    document
+        .getElementById("skillPickerModal")
+        .classList.remove("flex");
+}
+
+document
+.getElementById("profesiSelect")
+.addEventListener("change", function(){
+
+    selectedCompetencies = [];
+
+    document.getElementById("selectedSkillsHidden").value="";
+
+    document.getElementById("selectedSkillCount").innerHTML=
+        "Belum ada skill dipilih";
+
+    loadSkills();
+
+});
+
+function loadSkills() {
+
+    const profesi =
+        document.getElementById("profesiSelect").value;
+
+    if (!profesi) return;
+
+    fetch(`/get-skills/${encodeURIComponent(profesi)}`)
+        .then(response => response.json())
+        .then(data => {
+
+            let html = "";
+
+            data.forEach(item => {
+
+                html += `
+                    <label
+                        class="border border-slate-200 rounded-2xl p-4 hover:border-emerald-400 cursor-pointer transition"
+                    >
+
+                        <div class="flex items-start gap-3">
+
+                            <input
+                                    type="checkbox"
+                                    name="selected_skills"
+                                    value="${item.skill} ${item.detail}"
+                                        ${
+                                        selectedCompetencies.includes(
+                                        `${item.skill} ${item.detail}`
+                                        )
+                                        ? "checked"
+                                        : ""
+                                        }
+                                class="skill-checkbox mt-1 accent-emerald-600"
+                            >
+
+                            <div>
+
+                                <div class="font-bold text-slate-800">
+                                    ${item.skill}
+                                </div>
+
+                                <div class="text-xs text-slate-500 mt-1">
+                                    ${item.detail}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </label>
+                `;
+            });
+
+            document.getElementById("skillList").innerHTML = html;
+            document.getElementById("selectedSkillCount").innerHTML =
+                selectedCompetencies.length + " Kompetensi Dipilih";
+
+            document.getElementById("selectedSkillsHidden").value =
+                selectedCompetencies.join("|");
+        });
+}
+
+document.addEventListener("change", function(e){
+
+    if(!e.target.classList.contains("skill-checkbox")){
+        return;
+    }
+
+    selectedCompetencies = [];
+
+    document
+        .querySelectorAll(".skill-checkbox:checked")
+        .forEach(cb => {
+            selectedCompetencies.push(cb.value);
+        });
+
+    document.getElementById("selectedSkillCount").innerHTML =
+        selectedCompetencies.length + " skill dipilih";
+
+    document.getElementById("selectedSkillsHidden").value =
+        selectedCompetencies.join("|");
+});
+
+window.addEventListener("DOMContentLoaded", function(){
+
+    if(document.getElementById("profesiSelect").value){
+        loadSkills();
+    }
+
+});
+
+</script>
+
+
+
+{% endblock %}

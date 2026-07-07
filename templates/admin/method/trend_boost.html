@@ -1,0 +1,204 @@
+{% extends "admin/layout.html" %}
+
+{% block page_title %}Trend Boost{% endblock %}
+
+{% block content %}
+
+<div class="space-y-8">
+
+    <!-- HEADER -->
+    <div class="bg-white rounded-3xl border border-slate-200 p-8">
+
+        <div class="flex justify-between items-center">
+
+            <div>
+
+                <h1 class="text-3xl font-black text-slate-900">
+                    Trend Boost
+                </h1>
+
+                <p class="text-slate-500 mt-2">
+                    Perhitungan Trend Boost menggunakan kombinasi Similarity Trend dan Popularitas Google Trends.
+                </p>
+
+            </div>
+
+            <div class="text-right">
+
+                <div class="text-xs uppercase text-slate-500 font-bold">
+                    Alpha
+                </div>
+
+                <div class="text-4xl font-black text-emerald-600">
+
+                    {{ alpha }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RUMUS -->
+
+    <div class="bg-emerald-50 border border-emerald-200 rounded-3xl p-6">
+
+        <h2 class="font-bold text-emerald-700 mb-3">
+
+            Rumus Trend Boost
+
+        </h2>
+
+        <div class="text-lg font-mono text-slate-700">
+
+            Trend Boost =
+            α × Similarity(Trend,Course)
+            +
+            (1−α) × Popularity
+
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden">
+
+        <div class="overflow-auto">
+
+            <table class="min-w-full">
+
+                <thead class="bg-slate-100">
+
+                <tr class="text-xs uppercase tracking-wider text-slate-600">
+
+                    <th class="px-6 py-4 text-left">
+                        Course
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+                        Trend
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+                        Similarity
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+                        Popularity
+                    </th>
+
+                    <th class="px-6 py-4 text-center">
+                        Trend Boost
+                    </th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for row in results %}
+
+                <tr class="border-t hover:bg-slate-50">
+
+                    <td class="px-6 py-5">
+
+                        <div class="font-semibold">
+
+                            {{ row.course }}
+
+                        </div>
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        <span class="bg-indigo-100
+                                     text-indigo-700
+                                     px-3 py-1
+                                     rounded-full
+                                     text-xs
+                                     font-bold">
+
+                            {{ row.trend }}
+
+                        </span>
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        {{ row.similarity }}
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        {{ row.popularity }}
+
+                    </td>
+
+                    <td class="px-6 py-5 text-center">
+
+                        <span class="bg-emerald-100
+                                     text-emerald-700
+                                     px-4 py-2
+                                     rounded-xl
+                                     font-bold">
+
+                            {{ row.trend_boost }}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="bg-white rounded-3xl border border-slate-200 p-6">
+
+        <div class="flex justify-between items-center">
+
+            <div>
+
+                <h3 class="font-bold text-slate-800">
+
+                    Total Course
+
+                </h3>
+
+                <p class="text-slate-500">
+
+                    {{ total }} Course diproses.
+
+                </p>
+
+            </div>
+
+            <div class="bg-emerald-600 text-white px-5 py-3 rounded-2xl font-black">
+
+                Trend Boost Completed
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
