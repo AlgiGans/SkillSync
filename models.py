@@ -90,7 +90,11 @@ class SearchHistory(db.Model):
 class MyTable(db.Model):
     __tablename__ = 'mytable'
 
-    No = db.Column(db.Float, primary_key=True)
+    No = db.Column(
+    db.Integer,
+    primary_key=True,
+    autoincrement=True
+)
 
     Profesi_Bidang_Usaha = db.Column(
         db.String(1024)
